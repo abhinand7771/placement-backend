@@ -48,14 +48,14 @@ const isLocalDevOrigin = (origin) => {
 
 const allowedOrigins = [
   process.env.CORS_ORIGINS,
-  "http://localhost:5173,http://localhost:5174,http://localhost:3000",
+  "http://localhost:5173,http://localhost:5174,http://localhost:3000,https://placement-dashboad-frontend-dev.vercel.app",
 ]
   .filter(Boolean)
   .flatMap((value) => value.split(","))
   .map(normalizeOrigin)
   .filter(Boolean)
   .filter((origin, index, origins) => origins.indexOf(origin) === index);
-
+  
 const isAllowedOrigin = (origin) => {
   const normalizedOrigin = normalizeOrigin(origin);
   return (
