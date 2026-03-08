@@ -15,6 +15,7 @@ const PORT = Number(process.env.PORT) || 5000;
 const allowAllLocalOrigins = process.env.CORS_ALLOW_ALL_LOCAL !== "false";
 
 const normalizeOrigin = (origin = "") => origin.trim().replace(/\/+$/, "");
+
 const getOriginUrl = (origin) => {
   try {
     return new URL(origin);
@@ -39,6 +40,7 @@ const isPrivateIpv4Host = (hostname = "") => {
 const isLocalDevOrigin = (origin) => {
   const parsed = getOriginUrl(origin);
   if (!parsed) return false;
+
   return (
     (parsed.protocol === "http:" || parsed.protocol === "https:") &&
     (isLoopbackHost(parsed.hostname) ||
@@ -48,14 +50,14 @@ const isLocalDevOrigin = (origin) => {
 
 const allowedOrigins = [
   process.env.CORS_ORIGINS,
-  "http://localhost:5173,http://localhost:5174,http://localhost:3000,https://placement-dashboad-frontend-dev.vercel.app",
+  "http://localhost:5173,http://localhost:5174,http://localhost:3000,https://placement-dashboard-frontend-dev.vercel.app",
 ]
   .filter(Boolean)
   .flatMap((value) => value.split(","))
   .map(normalizeOrigin)
   .filter(Boolean)
   .filter((origin, index, origins) => origins.indexOf(origin) === index);
-  
+
 const isAllowedOrigin = (origin) => {
   const normalizedOrigin = normalizeOrigin(origin);
   return (
@@ -74,7 +76,13 @@ const corsOptions = {
     return callback(null, false);
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+  ],
   credentials: true,
   optionsSuccessStatus: 204,
 };
