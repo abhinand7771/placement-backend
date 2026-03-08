@@ -13,19 +13,27 @@ dotenv.config();
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
 
-onst allowedOrigins = (
-  process.env.CORS_ORIGINS ||
-  "https://placement-dashboard-frontend-3jur.vercel.app,http://localhost:5173,http://localhost:5174,http://localhost:300"
-)
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const normalizeOrigin = (origin = "") => origin.trim().replace(/\/+$/, "");
+
+const allowedOrigins = [
+  process.env.CORS_ORIGINS,
+  process.env.FRONTEND_URL,
+  "https://placement-dashboard-frontend-3jur.vercel.app,http://localhost:5173,http://localhost:5174,http://localhost:300",
+]
+  .filter(Boolean)
+  .flatMap((value) => value.split(","))
+  .map(normalizeOrigin)
+  .filter(Boolean)
+  .filter((origin, index, origins) => origins.indexOf(origin) === index);
 
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    const normalizedOrigin = normalizeOrigin(origin);
+
+    if (!origin || allowedOrigins.includes(normalizedOrigin)) {
       return callback(null, true);
     }
+    console.warn(`Blocked CORS origin: ${origin}`);
     return callback(null, false);
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
